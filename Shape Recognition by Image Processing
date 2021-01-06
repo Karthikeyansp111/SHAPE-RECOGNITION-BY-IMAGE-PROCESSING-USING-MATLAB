@@ -1,0 +1,161 @@
+function varargout = shaperec(varargin)
+gui_Singleton = 1;
+gui_State = struct('gui_Name', mfilename, ...
+ 'gui_Singleton', gui_Singleton, ...
+'gui_OpeningFcn', @shaperec_OpeningFcn, ...
+ 'gui_OutputFcn', @shaperec_OutputFcn, ...
+'gui_LayoutFcn', [] , ...
+'gui_Callback', []);
+if nargin && ischar(varargin{1})
+ gui_State.gui_Callback = str2func(varargin{1});
+end
+if nargout
+ [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+ gui_mainfcn(gui_State, varargin{:});
+end
+
+function shaperec_OpeningFcn(hObject, eventdata, handles, varargin)
+handles.output = hObject;
+guidata(hObject, handles);
+
+function varargout = shaperec_OutputFcn(hObject, eventdata, handles)
+varargout{1} = handles.output;
+
+function pushbutton1_Callback(hObject, eventdata, handles)
+
+function pushbutton2_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ i = handles.imgData;
+ ig = rgb2gray(i);
+ threshold = graythresh(ig);
+ BW = im2bw(ig, threshold);
+ BW = ~ BW;
+ axes(handles.axes2);
+ imshow(BW);
+end
+
+function pushbutton3_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ i = handles.imgData;
+ ig = rgb2gray(i);
+ axes(handles.axes2);
+ imshow(ig);
+end
+
+function pushbutton4_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ i = handles.imgData;
+ ig = rgb2gray(i);
+ threshold = graythresh(ig);
+ BW = im2bw(ig, threshold);
+ axes(handles.axes2);
+ imshow(BW);
+end
+
+function pushbutton5_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ i = handles.imgData;
+ ig = rgb2gray(i);
+ threshold = graythresh(ig);
+ BW = im2bw(ig, threshold);
+ BW = ~ BW;
+ axes(handles.axes2);
+ imshow(BW);
+ [B,L] = bwboundaries(BW, 'noholes');
+ [B,L] = bwboundaries(BW, 'noholes');
+ STATS = regionprops(L, 'all');
+ figure,
+ imshow(i),
+ title('Results');
+ hold on
+ for i = 1 : length(STATS)
+ W(i) = uint8(abs(STATS(i).BoundingBox(3)-
+STATS(i).BoundingBox(4)) < 0.1);
+ W(i) = W(i) + 2 * uint8((STATS(i).Extent - 1) == 0 );
+ centroid = STATS(i).Centroid;
+ switch W(i)
+ case 1
+ plot(centroid(1),centroid(2),'wO');
+ case 2
+ plot(centroid(1),centroid(2),'wX');
+ case 3
+ plot(centroid(1),centroid(2),'wS');
+ end
+ end
+end
+a=unique(W,'rows')
+unqA=unique(a);
+countElA=histc(a, unqA);
+b=unique(countElA,'rows')
+fprintf(' Other\n Shapes,Circles,Rectangles,Squares\n');
+disp(countElA);
+A1=double(b(:,1));
+A2=double(b(:,2));
+A3=double(b(:,3));
+A4=double(b(:,4));
+set(handles.text6,'string',A2);
+set(handles.text4,'string',A4);
+set(handles.text7,'string',A3);
+set(handles.text8,'string',A1);
+
+function pushbutton6_Callback(hObject, eventdata, handles)
+[FileName,PathName]=uigetfile({'*.BMP;*.jpg;*.png'},'Select an Image')
+fullfilename =fullfile(PathName,FileName);
+set(handles.edit2,'String',fullfilename);
+i = imread(fullfilename);
+axes(handles.axes1)
+imshow(i);
+handles.imgData = i;
+guidata(hObject,handles);
+
+function edit1_Callback(hObject, eventdata, handles)
+
+function edit1_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'),
+get(0,'defaultUicontrolBackgroundColor'))
+ set(hObject,'BackgroundColor','white');
+end
+
+function edit2_Callback(hObject, eventdata, handles)
+
+function edit2_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'),
+get(0,'defaultUicontrolBackgroundColor'))
+ set(hObject,'BackgroundColor','white');
+end
+
+function edit3_Callback(hObject, eventdata, handles)
+
+function edit3_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'),
+get(0,'defaultUicontrolBackgroundColor'))
+ set(hObject,'BackgroundColor','white');
+end
+
+function pushbutton7_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ img = handles.imgData;
+ grayy=rgb2gray(img);
+ gr=graythresh(grayy);
+ handles.bw=im2bw(grayy,gr);
+ handles.output=hObject;
+ inverse_binary=not(handles.bw);
+ [handles.L handles.Num_object]=bwlabel(inverse_binary);
+ set(handles.text2,'string',handles.Num_object);
+ imshow(handles.L,'Parent',handles.axes2);
+end
+
+function pushbutton8_Callback(hObject, eventdata, handles)
+
+function pushbutton9_Callback(hObject, eventdata, handles)
+if isfield(handles,'imgData')
+ i = handles.imgData;
+ ig = rgb2gray(i);
+ threshold = graythresh(ig);
+ BW = im2bw(ig, threshold);
+ BW = ~ BW;
+[labeledImage numberOfObjects] = bwlabel(BW);
+end
+
+function pushbutton10_Callback(hObject, eventdata, handles)
